@@ -53,7 +53,7 @@ func (sec *Section) GetValues(name string) ([]string, error) {
 	if _, ok := sec.data[name]; ok {
 		return sec.data[name], nil
 	} else {
-		return nil, errors.New(fmt.Sprintf("Variable '%v' does not exist in this section", name))
+		return  nil, errors.New(fmt.Sprintf("Variable '%v' does not exist in this section", name))
 	}
 }
 
