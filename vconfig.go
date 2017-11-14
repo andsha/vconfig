@@ -12,6 +12,7 @@ import (
 type VConfig []*Section
 
 // Creates new VConfig object
+//
 func New(filename string) (VConfig, error) {
 	var vc VConfig
 
