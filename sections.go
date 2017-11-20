@@ -53,15 +53,17 @@ func (sec *Section) GetValues(name string) ([]string, error) {
 	if _, ok := sec.data[name]; ok {
 		return sec.data[name], nil
 	} else {
-		return nil, errors.New(fmt.Sprintf("Variable '%v' does not exist in this section", name))
+		//return nil, errors.New(fmt.Sprintf("Variable '%v' does not exist in this section", name))
+		return nil,nil
 	}
 }
 
 //returns single value
+
 func (sec *Section) GetSingleValue(name string, default_value string) (string, error) {
-	values, err := sec.GetValues(name)
-	if err != nil {
-		return default_value, err
+	values, _ := sec.GetValues(name)
+	if values == nil {
+		return default_value, nil
 	}
 	if len(values) > 1 {
 		return "", errors.New(fmt.Sprintf("Variable '%v' has multiple values", name))
@@ -106,6 +108,4 @@ func (secto *Section) Merge(secfrom *Section) {
 }
 
 // clears content of section keeping name unchanged
-func (sec *Section) ClearContent() {
-	sec.data = make(map[string][]string)
-}
+func (sec *Section) ClearContent() {sec.data = make(map[string][]string)}

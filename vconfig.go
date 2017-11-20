@@ -1,4 +1,5 @@
 package vconfig
+
 //
 //
 //
@@ -44,7 +45,7 @@ func (vc *VConfig) FromString(str string) error {
 	current_section = gsection
 
 	for idx, line := range strings.Split(string(str), "\n") {
-        //TODO add strip in case of case extra spaces
+		line = strings.TrimSpace(line)
 		if strings.HasPrefix(line, "[") && strings.HasSuffix(line, "]") { // if [] then beginnin of section
 			if len(line) > 2 {
 				key := line[1 : len(line)-1]
@@ -57,7 +58,7 @@ func (vc *VConfig) FromString(str string) error {
 			continue
 		}
 		if len(line) > 0 && !strings.HasPrefix(line, "#") {
-            splitline := strings.SplitN(line, "=", 2)
+			splitline := strings.SplitN(line, "=", 2)
 
 			if len(splitline) != 2 {
 				return errors.New(fmt.Sprintf("Line %d: %s\nMissing equal sign?", idx+1, line))
@@ -95,12 +96,11 @@ func (vc *VConfig) AddSection(sec *Section) error {
 				gsec[0].AddValues(variable, val)
 
 			}
-            return nil
+			return nil
 
 		}
-    }
-    //TODO check logic
-    *vc = append(*vc, sec)
+	}
+	*vc = append(*vc, sec)
 
 	return nil
 }
@@ -150,7 +150,7 @@ func (vc *VConfig) ToFile(fname string) error {
 	if err := ioutil.WriteFile(fname, []byte(vc.ToString()), 0666); err != nil { // check encoding:
 		// 1. convert string to ascii file using excape characters: %q in sprinf
 		//2.
-        //TODO
+		//TODO
 		return err
 	}
 	return nil
@@ -178,23 +178,31 @@ func (vcto *VConfig) Merge(vcfrom VConfig) {
 	}
 }
 
-func (vc *VConfig) GetSectionsByVar(secName, varName, varValue string) ([]*Section, error){
-    var sections []*Section
-    err := errors.New("")
-    if secName == ""{
-        sections = *vc
-    } else {
-        sections, err = vc.GetSections(secName)
-        if err != nil {return nil, err}
-    }
-    secs := make([]*Section, 0)
-    for _, section := range sections {
-        v, err := section.GetSingleValue(varName, "")
-        if err != nil {return nil, err}
-        if v == varValue {secs = append(secs, section)}
-    }
-    if len(secs) == 0 {return nil, errors.New(fmt.Sprintf("Cannot find section %v where %v=%v", secName, varName, varValue))}
-    return secs, nil
+func (vc *VConfig) GetSectionsByVar(secName, varName, varValue string) ([]*Section, error) {
+	var sections []*Section
+	err := errors.New("")
+	if secName == "" {
+		sections = *vc
+	} else {
+		sections, err = vc.GetSections(secName)
+		if err != nil {
+			return nil, err
+		}
+	}
+	secs := make([]*Section, 0)
+	for _, section := range sections {
+		v, err := section.GetSingleValue(varName, "")
+		if err != nil {
+			return nil, err
+		}
+		if v == varValue {
+			secs = append(secs, section)
+		}
+	}
+	if len(secs) == 0 {
+		return nil, errors.New(fmt.Sprintf("Cannot find section %v where %v=%v", secName, varName, varValue))
+	}
+	return secs, nil
 }
 
 //**************************   internals *****************************
