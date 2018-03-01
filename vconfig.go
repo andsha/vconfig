@@ -14,11 +14,8 @@ type VConfig []*Section
 func New(filename string) (VConfig, error) {
 	var vc VConfig
 
-	if filename != "" {
-		err := vc.fromFile(filename)
-		if err != nil {
-			return nil, err
-		}
+	if err := vc.fromFile(filename); err != nil {
+		return nil, err
 	}
 	return vc, nil
 }
@@ -71,7 +68,17 @@ func (vc *VConfig) FromString(str string) error {
 				return errors.New(fmt.Sprintf("Line %d: %s\nZero-length values are not allowed", idx+1, line))
 			}
 
-			current_section.AddValues(variable, []string{value})
+			values := strings.Split(value, ",")
+			vs := make([]string, 0)
+
+			for _, v := range values {
+				v = strings.Trim(v, " ")
+				if len(v) != 0 {
+					vs = append(vs, v)
+				}
+			}
+
+			current_section.AddValues(variable, vs)
 		}
 	}
 	return nil
@@ -89,10 +96,8 @@ func (vc *VConfig) AddSection(sec *Section) error {
 			for _, variable := range variables {
 				val, _ := sec.GetValues(variable)
 				gsec[0].AddValues(variable, val)
-
 			}
 			return nil
-
 		}
 	}
 	*vc = append(*vc, sec)
@@ -106,6 +111,11 @@ func (vc *VConfig) NewSection(name string) *Section {
 	vc.AddSection(nsec)
 	return nsec
 
+}
+
+// Wrapper for GetSections()
+func (vc *VConfig) GetSectionsByName(name string) ([]*Section, error) {
+	return vc.GetSections(name)
 }
 
 // return section(s) based on its name
