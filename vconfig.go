@@ -9,6 +9,7 @@ import (
 
 type VConfig []*Section
 
+//Hi from Shamil
 // Creates new VConfig object
 //b
 func New(filename string) (VConfig, error) {
