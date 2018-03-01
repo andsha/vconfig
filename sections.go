@@ -54,7 +54,7 @@ func (sec *Section) GetValues(name string) ([]string, error) {
 		return sec.data[name], nil
 	} else {
 		//return nil, errors.New(fmt.Sprintf("Variable '%v' does not exist in this section", name))
-		return nil,nil
+		return nil, nil
 	}
 }
 
@@ -92,8 +92,9 @@ func (sec *Section) ToString() string {
 	for _, variable := range vars {
 		vals, _ := sec.GetValues(variable)
 		//fmt.Println(vals)
-		for _, val := range vals {
-			str = fmt.Sprintf("%v\n%v=%v", str, variable, val)
+		str = fmt.Sprintf("%v\n%v = %v", str, variable, vals[0])
+		for idv := 1; idv < len(vals); idv++ {
+			str = fmt.Sprintf("%v, %v", str, vals[idv])
 		}
 	}
 	return str
@@ -108,4 +109,4 @@ func (secto *Section) Merge(secfrom *Section) {
 }
 
 // clears content of section keeping name unchanged
-func (sec *Section) ClearContent() {sec.data = make(map[string][]string)}
+func (sec *Section) ClearContent() { sec.data = make(map[string][]string) }
