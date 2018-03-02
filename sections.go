@@ -24,7 +24,7 @@ func (sec *Section) Name() string {
 // assign values to variable; rewrite old values
 func (sec *Section) SetValues(name string, values []string) {
 	sec.data[name] = values
-}
+	}
 
 // add values to variable. extend list of old values with new ones
 func (sec *Section) AddValues(name string, values []string) {
@@ -91,10 +91,8 @@ func (sec *Section) ToString() string {
 	vars := sec.GetVariables()
 	for _, variable := range vars {
 		vals, _ := sec.GetValues(variable)
-		//fmt.Println(vals)
-		str = fmt.Sprintf("%v\n%v = %v", str, variable, vals[0])
-		for idv := 1; idv < len(vals); idv++ {
-			str = fmt.Sprintf("%v, %v", str, vals[idv])
+		for idv := 0; idv < len(vals); idv++ {
+			str = fmt.Sprintf("%v\n%v = %v", str, variable, vals[idv])
 		}
 	}
 	return str
